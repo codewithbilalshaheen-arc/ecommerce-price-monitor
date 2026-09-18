@@ -62,3 +62,42 @@ def test_price_log_creation(in_memory_db):
 
     assert in_memory_db.query(PriceLog).count() == 1
     assert log.price == 399.99
+
+
+def test_init_db_concurrency_and_existing_tables(monkeypatch, tmp_path):
+    import threading
+    from sqlalchemy.exc import OperationalError
+    from src.db.session import init_db
+
+    db_file = tmp_path / "test_init.db"
+    test_db_url = f"sqlite:///{db_file}"
+    monkeypatch.setattr("src.db.session.DATABASE_URL", test_db_url)
+    from src.db import session
+    test_engine = create_engine(test_db_url, connect_args={"check_same_thread": False})
+    monkeypatch.setattr(session, "engine", test_engine)
+
+    # Calling init_db multiple times / concurrently should not raise errors even if tables exist
+    exceptions = []
+
+    def worker():
+        try:
+            init_db()
+        except Exception as e:
+            exceptions.append(e)
+
+    threads = [threading.Thread(target=worker) for _ in range(5)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+
+    assert not exceptions, f"Exceptions occurred during init_db: {exceptions}"
+
+    # Test OperationalError with 'already exists' is caught, but other OperationalErrors are re-raised
+    def raise_other_op_error(*args, **kwargs):
+        raise OperationalError("SELECT 1", {}, Exception("database is locked"))
+
+    monkeypatch.setattr(Base.metadata, "create_all", raise_other_op_error)
+    with pytest.raises(OperationalError) as exc_info:
+        init_db()
+    assert "database is locked" in str(exc_info.value)

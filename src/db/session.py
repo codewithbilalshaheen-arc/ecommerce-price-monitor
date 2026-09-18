@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 from src.config import DATABASE_URL
 from src.db.models import Base
@@ -11,7 +12,13 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def init_db():
-    Base.metadata.create_all(bind=engine)
+    try:
+        Base.metadata.create_all(bind=engine)
+    except OperationalError as e:
+        if "already exists" in str(e).lower():
+            pass
+        else:
+            raise
 
 
 @contextmanager

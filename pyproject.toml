@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ecommerce-price-monitor"
+version = "0.1.0"
+description = "Automated E-commerce Price Monitoring Scraper and Dashboard"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.0",
+    "pandas>=2.0.0",
+    "sqlalchemy>=2.0.0",
+    "streamlit>=1.30.0",
+    "plotly>=5.18.0",
+    "playwright>=1.40.0"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

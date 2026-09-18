@@ -68,7 +68,7 @@ An automated, resilient e-commerce price monitoring solution built in Python. Tr
 ### 2. Installation
 ```bash
 # Clone repository
-git clone https://github.com/your-org/ecommerce-price-monitor.git
+git clone https://github.com/codewithbilalshaheen-arc/ecommerce-price-monitor.git
 cd ecommerce-price-monitor
 
 # Install dependencies

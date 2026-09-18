@@ -18,7 +18,6 @@ class ScrapingEngine:
         self.playwright_scraper = PlaywrightScraper() if use_playwright else None
 
     def scrape_url(self, comp_url: CompetitorUrl) -> Dict[str, Any]:
-        """Scrape a single CompetitorUrl using appropriate scraper."""
         url = comp_url.url
         price_sel = comp_url.css_selector_price
         title_sel = comp_url.css_selector_title
@@ -29,7 +28,6 @@ class ScrapingEngine:
             return self.bs4_scraper.scrape(url, price_sel, title_sel)
 
     def run_job_for_url(self, comp_url_id: int, threshold_pct: float = 5.0) -> Optional[PriceLog]:
-        """Scrape a single URL ID and save results to DB."""
         with get_db() as db:
             comp_url = db.query(CompetitorUrl).get(comp_url_id)
             if not comp_url or not comp_url.is_active:
@@ -43,15 +41,12 @@ class ScrapingEngine:
                     comp_url.last_status = "FAILED"
                     comp_url.last_error = "Could not extract price"
                     comp_url.last_scraped_at = now
-                    logger.error(f"Failed to extract price for {comp_url.url}")
                     return None
 
-                # Update competitor URL status
                 comp_url.last_status = "SUCCESS"
                 comp_url.last_error = None
                 comp_url.last_scraped_at = now
 
-                # Add price log entry
                 price_log = PriceLog(
                     product_id=comp_url.product_id,
                     competitor_url_id=comp_url.id,
@@ -65,7 +60,6 @@ class ScrapingEngine:
                 db.add(price_log)
                 db.flush()
 
-                # Check for significant price changes and create alert if needed
                 detect_price_change_and_alert(db, comp_url, price_log, threshold_pct=threshold_pct)
 
                 return price_log
@@ -78,7 +72,6 @@ class ScrapingEngine:
                 return None
 
     def run_all(self, threshold_pct: float = 5.0) -> List[PriceLog]:
-        """Scrape all active competitor URLs in database."""
         results = []
         with get_db() as db:
             active_urls = db.query(CompetitorUrl).filter(CompetitorUrl.is_active == True).all()

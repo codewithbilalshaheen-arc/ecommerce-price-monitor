@@ -1,16 +1,13 @@
 import re
-from typing import Optional, Tuple
+from typing import Optional
 
 
 def clean_price(raw_text: Optional[str]) -> Optional[float]:
-    """Extract and normalize a numeric price float from raw string text."""
     if not raw_text:
         return None
 
-    # Replace common currency symbols and non-breaking spaces
     text = str(raw_text).replace("\xa0", " ").strip()
 
-    # Pattern for European format: e.g., "1.299,00 €" or "1299,00"
     if re.search(r"\d+\.\d{3},\d{2}", text) or re.search(r"\d+,\d{2}\s*(?:€|EUR)", text):
         match_eu = re.search(r"(\d{1,3}(?:\.\d{3})*(?:,\d{1,2}))", text)
         if match_eu:
@@ -20,7 +17,6 @@ def clean_price(raw_text: Optional[str]) -> Optional[float]:
             except ValueError:
                 pass
 
-    # Standard US/UK format: e.g., "$1,249.50" or "$299.99"
     match = re.search(r"(\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?)", text)
     if match:
         num_str = match.group(1).replace(",", "")
@@ -33,7 +29,6 @@ def clean_price(raw_text: Optional[str]) -> Optional[float]:
 
 
 def detect_currency(raw_text: Optional[str]) -> str:
-    """Detect currency code based on symbol or explicit text in raw price string."""
     if not raw_text:
         return "USD"
 
@@ -58,16 +53,13 @@ def detect_currency(raw_text: Optional[str]) -> str:
 
 
 def clean_title(raw_title: Optional[str]) -> str:
-    """Clean and strip unnecessary white space or newlines from product title."""
     if not raw_title:
         return "Unknown Product"
-    
     title = re.sub(r"\s+", " ", str(raw_title)).strip()
     return title if title else "Unknown Product"
 
 
 def check_availability(raw_text: Optional[str]) -> bool:
-    """Determine product availability based on page text."""
     if not raw_text:
         return True
 

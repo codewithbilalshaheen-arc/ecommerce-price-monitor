@@ -81,7 +81,7 @@ class AlertLog(Base):
     old_price = Column(Float, nullable=False)
     new_price = Column(Float, nullable=False)
     pct_change = Column(Float, nullable=False)
-    alert_type = Column(String(50), nullable=False)  # e.g., "PRICE_DROP", "PRICE_INCREASE"
+    alert_type = Column(String(50), nullable=False)
     message = Column(Text, nullable=False)
     created_at = Column(DateTime, default=utc_now)
 

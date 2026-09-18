@@ -13,8 +13,6 @@ def detect_price_change_and_alert(
     new_price_log: PriceLog,
     threshold_pct: float = 5.0,
 ) -> Optional[AlertLog]:
-    """Compare newly scraped price with previous recorded price. Trigger alert if change >= threshold_pct."""
-    # Retrieve previous price log for this competitor URL (excluding the current log)
     previous_log = (
         db.query(PriceLog)
         .filter(
@@ -26,7 +24,6 @@ def detect_price_change_and_alert(
     )
 
     if not previous_log:
-        logger.info(f"First price log for competitor URL {comp_url.id} (${new_price_log.price}). No prior history to compare.")
         return None
 
     old_price = previous_log.price
@@ -58,11 +55,9 @@ def detect_price_change_and_alert(
         db.add(alert_log)
         db.flush()
 
-        # Send notifications
         send_slack_notification(msg)
         send_email_notification(f"Price Alert: {comp_url.competitor_name}", msg)
 
-        logger.info(f"Triggered {alert_type} alert for URL {comp_url.id}: {pct_change}%")
         return alert_log
 
     return None

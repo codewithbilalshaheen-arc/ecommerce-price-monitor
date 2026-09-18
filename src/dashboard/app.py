@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 
-# Ensure root is in path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 import streamlit as st
@@ -21,7 +20,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Initialize DB if not exists
 init_db()
 
 
@@ -78,7 +76,6 @@ def render_price_comparison():
         for prod in products:
             st.subheader(f"📦 {prod.name} (Category: {prod.category or 'General'})")
 
-            # Get latest price for each competitor URL for this product
             comp_urls = db.query(CompetitorUrl).filter(CompetitorUrl.product_id == prod.id, CompetitorUrl.is_active == True).all()
 
             comp_rows = []
@@ -108,11 +105,9 @@ def render_price_comparison():
                 st.info("No competitor URLs configured for this product.")
                 continue
 
-            # Calculate price rank and comparison
             df_comp = pd.DataFrame(comp_rows)
             valid_prices = df_comp.dropna(subset=["Price"]).sort_values("Price")
 
-            # Render summary badge
             if our_price and not valid_prices.empty:
                 lowest_p = valid_prices["Price"].min()
                 if our_price <= lowest_p:
@@ -121,7 +116,6 @@ def render_price_comparison():
                     diff = our_price - lowest_p
                     st.warning(f"⚠️ Price Attention: Our Price (\\${our_price:.2f}) is \\${diff:.2f} higher than lowest competitor (\\${lowest_p:.2f}).")
 
-            # Format comparison table
             display_data = []
             for row in comp_rows:
                 p = row["Price"]
@@ -189,7 +183,6 @@ def render_price_history():
 
         df_chart = pd.DataFrame(chart_data)
 
-        # Plotly Line Chart
         fig = px.line(
             df_chart,
             x="Date",

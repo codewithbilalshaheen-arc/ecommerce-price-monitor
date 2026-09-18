@@ -2,7 +2,6 @@ import argparse
 import sys
 from pathlib import Path
 
-# Ensure project root directory is in sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import pandas as pd
@@ -13,7 +12,6 @@ from src.scraper.engine import ScrapingEngine
 
 
 def run_scrape(use_playwright: bool = False, threshold_pct: float = 5.0):
-    """Run scraper for all tracked competitor URLs."""
     print("Starting price scraper run...")
     engine = ScrapingEngine(use_playwright=use_playwright)
     results = engine.run_all(threshold_pct=threshold_pct)
@@ -21,7 +19,6 @@ def run_scrape(use_playwright: bool = False, threshold_pct: float = 5.0):
 
 
 def export_report(output_file: str = "data/price_report.csv"):
-    """Export current and historical price data to CSV report."""
     with get_db() as db:
         logs = (
             db.query(PriceLog, Product.name, CompetitorUrl.competitor_name)
@@ -52,18 +49,13 @@ def main():
     parser = argparse.ArgumentParser(description="E-commerce Price Monitoring Scraper CLI")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
-    # init-db
     subparsers.add_parser("init-db", help="Initialize database schema")
-
-    # seed
     subparsers.add_parser("seed", help="Seed database with demo products and historical data")
 
-    # scrape
     scrape_parser = subparsers.add_parser("scrape", help="Run scheduled price scraping job")
     scrape_parser.add_argument("--playwright", action="store_true", help="Use Playwright for dynamic rendering")
     scrape_parser.add_argument("--threshold", type=float, default=5.0, help="Alert threshold percentage")
 
-    # export
     export_parser = subparsers.add_parser("export", help="Export price history to CSV")
     export_parser.add_argument("--output", type=str, default="data/price_report.csv", help="CSV output path")
 
@@ -73,7 +65,7 @@ def main():
         init_db()
         print("Database initialized successfully.")
     elif args.command == "seed":
-        seed_demo_data()
+        seed_demo_data(force_reseed=True)
     elif args.command == "scrape":
         run_scrape(use_playwright=args.playwright, threshold_pct=args.threshold)
     elif args.command == "export":

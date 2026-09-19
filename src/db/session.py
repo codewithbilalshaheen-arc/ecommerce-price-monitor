@@ -20,6 +20,13 @@ def init_db():
         else:
             raise
 
+    # Auto-seed demo data if database is empty (e.g. fresh deployment)
+    try:
+        from src.db.seed import seed_demo_data
+        seed_demo_data(force_reseed=False)
+    except Exception:
+        pass
+
 
 @contextmanager
 def get_db():

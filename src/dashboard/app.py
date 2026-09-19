@@ -75,7 +75,7 @@ def render_price_comparison(selected_currency: str):
         products = db.query(Product).all()
 
         if not products:
-            st.warning("No products found in the database. Go to '🔍 Product Search & Configuration' or run `python src/cli.py seed` to populate demo data.")
+            st.warning("No products found in the database. Go to '🔍 Product Search & Configuration' to add products or populate demo data.")
             return
 
         # Category Filter

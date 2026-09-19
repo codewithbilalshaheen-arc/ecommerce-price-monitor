@@ -25,6 +25,7 @@ ALERT_EMAIL_RECIPIENT = os.getenv("ALERT_EMAIL_RECIPIENT", "")
 # Currency conversion rates relative to USD
 EXCHANGE_RATES = {
     "USD": {"rate": 1.0, "symbol": "$"},
+    "PKR": {"rate": 278.00, "symbol": "Rs "},
     "EUR": {"rate": 0.92, "symbol": "€"},
     "GBP": {"rate": 0.79, "symbol": "£"},
     "INR": {"rate": 83.50, "symbol": "₹"},

@@ -5,8 +5,6 @@ from src.db.models import Product, CompetitorUrl, PriceLog, AlertLog
 
 
 def seed_demo_data(force_reseed: bool = False):
-    init_db()
-
     with get_db() as db:
         if not force_reseed and db.query(Product).count() > 0:
             print("Database already seeded.")
@@ -177,4 +175,5 @@ def seed_demo_data(force_reseed: bool = False):
 
 
 if __name__ == "__main__":
+    init_db()
     seed_demo_data(force_reseed=True)

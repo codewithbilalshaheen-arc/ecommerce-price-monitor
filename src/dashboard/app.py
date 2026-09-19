@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from datetigit checkout mainme import datetime, timezone
+from datetime import datetime, timezone
 
 from src.db.session import init_db, get_db
 from src.db.models import Product, CompetitorUrl, PriceLog, AlertLog

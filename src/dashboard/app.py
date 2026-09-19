@@ -259,7 +259,7 @@ def render_product_search_and_config(selected_currency: str):
         products = db.query(Product).all()
 
         search_query = st.text_input("Enter Product Name or Keyword to Search", value="", placeholder="e.g. Headphones, Watch, Laptop...")
-
+        
         all_categories = sorted(list({p.category for p in products if p.category}))
         selected_cat_scrape = st.selectbox("Or Select Category to Filter / Scrape", options=["All Categories"] + all_categories)
 
